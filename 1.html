@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>سامانه مدیریت</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>سامانه مدیریت شرکت گسترده کامل پویا جهش</title>
 <style>
   body {
     font-family: Tahoma, sans-serif;
@@ -17,7 +17,7 @@
     color: #333;
   }
   .menu {
-    display: flex;
+    display: none; /* اول مخفی */
     flex-direction: column;
     gap: 20px;
     max-width: 400px;
@@ -40,16 +40,100 @@
   }
   .attendance { border-top: 4px solid #2196f3; }
   .report { border-top: 4px solid #4caf50; }
+
+  .login-box {
+    max-width: 400px;
+    margin: auto;
+    background: white;
+    padding: 30px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  input[type="password"] {
+    width: 80%;
+    padding: 12px;
+    margin: 10px 0 20px;
+    font-size: 18px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+  }
+  input[type="password"]:focus {
+    border-color: #2196f3;
+  }
+  button {
+    padding: 12px 30px;
+    font-size: 18px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #1976d2;
+  }
+  .error {
+    color: red;
+    margin-top: -15px;
+    margin-bottom: 15px;
+    display: none;
+  }
 </style>
 </head>
 <body>
 
-<h1>سامانه مدیریت شرکت</h1>
+<h1>سامانه مدیریت شرکت گسترده کامل پویا جهش</h1>
 
-<div class="menu">
+<div class="login-box" id="loginBox">
+  <input type="password" id="passwordInput" placeholder="رمز را وارد کنید" />
+  <div class="error" id="errorMsg">رمز اشتباه است!</div>
+  <button onclick="checkPassword()">ورود</button>
+</div>
+
+<div class="menu" id="menu">
   <a href="2.html" class="card attendance">📋 سامانه حضور و غیاب</a>
   <a href="3.html" class="card report">📝 گزارش روزانه</a>
 </div>
+
+<script>
+  // بررسی وضعیت ورود قبلی (تاریخ ذخیره شده با تاریخ امروز چک می‌شود)
+  function hasValidLogin() {
+    const saved = localStorage.getItem('loginDate');
+    if (!saved) return false;
+    const savedDate = new Date(saved);
+    const now = new Date();
+    // مقایسه فقط سال، ماه و روز
+    return savedDate.getFullYear() === now.getFullYear() &&
+           savedDate.getMonth() === now.getMonth() &&
+           savedDate.getDate() === now.getDate();
+  }
+
+  function showMenu() {
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('menu').style.display = 'flex';
+    document.getElementById('errorMsg').style.display = 'none';
+  }
+
+  function checkPassword() {
+    const password = document.getElementById('passwordInput').value;
+    const errorMsg = document.getElementById('errorMsg');
+    if (password === '1234') {  // رمز ورود (قابل تغییر)
+      // ذخیره تاریخ ورود به صورت ISO برای مقایسه
+      localStorage.setItem('loginDate', new Date().toISOString());
+      showMenu();
+    } else {
+      errorMsg.style.display = 'block';
+    }
+  }
+
+  // موقع بارگذاری صفحه بررسی میکنیم
+  window.onload = function() {
+    if (hasValidLogin()) {
+      showMenu();
+    }
+  };
+</script>
 
 </body>
 </html>
