@@ -1,9 +1,10 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
+
 <html lang="fa">  
 <head>  
-  <meta charset="utf-8" />  
-  <meta name="viewport" content="width=device-width,initial-scale=1" />  
-  <title>گزارش روزانه - سامانه حضور و غیاب</title>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />  
+  <title>سامانه حضور و غیاب</title>  
   <style>  
     body {  
       font-family: Tahoma, sans-serif;  
@@ -13,85 +14,110 @@
       text-align: center;  
     }  
     h2 { margin-bottom: 10px; }  
-    .controls {  
-      max-width: 900px;  
-      margin: 12px auto;  
-      display:flex;  
-      gap:8px;  
-      align-items:center;  
-      justify-content:center;  
-      flex-wrap:wrap;  
-    }  
-    input[type="text"], select {  
-      padding:8px 10px;  
-      border-radius:6px;  
-      border:1px solid #ccc;  
-      font-size:14px;  
-      text-align:center;  
-    }  
-    button {  
-      padding:8px 12px;  
-      border-radius:6px;  
-      border:none;  
-      cursor:pointer;  
-      background:#2196f3;  
-      color:white;  
-      user-select:none;  
-    }  
-    button.danger { background:#e53935; }  
-    button.secondary { background:#607d8b; }  
     table {  
       width: 100%;  
       border-collapse: collapse;  
       background: white;  
-      margin-top: 16px;  
-      max-width: 900px;  
-      margin-left:auto;  
-      margin-right:auto;  
+      margin-bottom: 20px;  
+      table-layout: fixed;  
     }  
     th, td {  
-      border: 1px solid #ddd;  
-      padding: 8px;  
+      border: 1px solid #ccc;  
+      padding: 8px 6px;  
+      font-size: 14px;  
+      vertical-align: middle;  
+      word-wrap: break-word;  
+    }  
+    th {  
+      background-color: #eee;  
+    }  
+    .btn {  
+      padding: 6px 10px;  
       font-size: 13px;  
+      border: none;  
+      border-radius: 4px;  
+      cursor: pointer;  
+      user-select: none;  
+      margin: 2px;  
+    }  
+    .btn:active { transform: scale(0.95); }  
+    .delete-btn { background-color: #a50014; color: white; }  
+    .status-btn { background-color: #ccc; color: #000; }  
+    .status-btn.active1 { background-color: #158b00; color: white; }  
+    .status-btn.active { background-color: #a50014; color: white; }  
+    .save-btn {  
+      background-color: #4caf50;  
+      color: white;  
+      font-size: 12px;  
+      padding: 6px 12px;  
+      border: none;  
+      border-radius: 6px;  
+      cursor: pointer;  
+      float: left;  
+      margin-bottom: 10px;  
+      user-select: none;  
+    }  
+    .add-form {  
+      background: white;  
+      padding: 10px 12px;  
+      border-radius: 8px;  
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);  
+      max-width: 420px;  
+      margin: 0 auto;  
+      text-align: left;  
+    }  
+    .add-form input {  
+      width: 120px;  
+      padding: 6px;  
+      font-size: 13px;  
+      margin-left: 8px;  
+      border: 1px solid #ccc;  
+      border-radius: 5px;  
       text-align: center;  
     }  
-    th { background:#eee; }  
-    .small {  
-      font-size:12px;  
-      padding:6px 8px;  
+    .add-form button.add-btn {  
+      width: 90px;  
+      padding: 6px 10px;  
+      font-size: 13px;  
+      background-color: #4caf50;  
+      color: white;  
+      border: none;  
+      border-radius: 6px;  
+      cursor: pointer;  
+      margin-left: 8px;  
     }  
-    .actions button {  
-      margin:2px;  
-      padding:6px 8px;  
-      border-radius:5px;  
-      font-size:12px;  
+    /* تنظیمات بخش ورود و خروج و دکمه ثبت کنار آن */  
+    .time-cell div {  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      gap: 6px;  
     }  
-    .no-data {  
-      color:#666;  
-      margin-top: 30px;  
+    .time-cell input {  
+      width: 60px;  
+      padding: 6px 8px;  
+      font-size: 0.9rem;  
+      border-radius: 5px;  
+      border: 1px solid #ccc;  
+      text-align: center;  
+      flex-shrink: 0;  
     }  
-    .top-row {  
-      display:flex;  
-      justify-content:center;  
-      gap:12px;  
-      align-items:center;  
-      max-width:900px;  
-      margin:0 auto 6px auto;  
+    .time-register-btn {  
+      padding: 4px 8px;  
+      font-size: 12px;  
+      cursor: pointer;  
+      border-radius: 5px;  
+      border: 1px solid #4caf50;  
+      background-color: #a5d6a7;  
+      color: #2e7d32;  
+      user-select: none;  
+      flex-shrink: 0;  
+      transition: background-color 0.3s;  
     }  
-    a.back {  
-      display:inline-block;  
-      margin-top:10px;  
-      text-decoration:none;  
-      color:#333;  
-      background:white;  
-      padding:8px 12px;  
-      border-radius:6px;  
-      box-shadow:0 1px 4px rgba(0,0,0,0.08);  
+    .time-register-btn:hover {  
+      background-color: #81c784;  
     }  
-    @media (max-width:760px){  
-      table, .controls { width: 100%; }  
-      th, td { font-size:12px; padding:6px; }  
-    }  
+    /* استایل دکمه بازگشت */  
     #backBtn {  
       margin-bottom: 15px;  
       padding: 6px 12px;  
@@ -99,226 +125,242 @@
       border-radius: 6px;  
       border: 1px solid #ccc;  
       cursor: pointer;  
-      background-color: #;  
-      user-select: none; 
+      background-color: #2196f3;  
+      user-select: none;
+        
     }  
     #backBtn:hover {  
-      background-color: #ddd;  
+      background-color: #ddd;
+      text-color: white;
+    } 
+    /* استایل کانتینر تاریخ و دکمه ثبت */  
+    #dateContainer {  
+      margin-bottom: 20px;  
+      display: inline-flex;  
+      align-items: center;  
+      gap: 8px;  
+      justify-content: center;  
+      width: 100%;  
     }  
-    /* استایل دکمه ثبت تاریخ کنار input */  
+    #dateInput {  
+      width: 180px;  
+      padding: 8px;  
+      font-size: 14px;  
+      border-radius: 6px;  
+      border: 1px solid #ccc;  
+      text-align: center;  
+    }  
     #registerDateBtn {  
-      width: 70px;  
-      margin-right: 10px;  
-      vertical-align: middle;  
+      width: 90px;  
+      height: 34px;  
+      padding: 0;  
     }  
-  </style>    <!-- اضافه کردن کتابخانه SheetJS برای خروجی Excel -->    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>  </head>  
+  </style>  
+</head>  
 <body>  
-    <a href="1.html"><button id="backBtn" onclick="history.back()">← بازگشت</button>  
-</a>  
-  <h2>📅 گزارش روزانه</h2>    <div class="controls">  
-    <input type="text" id="filterDate" placeholder="مثال: 1404/05/17 یا خالی برای همه" />  
-    <button id="btnFilter">🔎 فیلتر</button>  
-    <select id="dateSelect" style="min-width:220px;">  
-      <option value="">➤ انتخاب تاریخ از فهرست (اختیاری)</option>  
-    </select>  
-    <button id="btnShowAll" class="secondary">نمایش همه</button>  
-    <button id="btnExport">⬇️ خروجی Excel</button>  
-  </div>    <div class="top-row">  
-    <a href="hozur.html" class="back">◀ بازگشت به حضور و غیاب</a>  
-    <button id="btnClearAll" class="danger" title="حذف همه گزارش‌ها">حذف همه گزارش‌ها</button>  
-  </div>    <div id="tableContainer"></div>    <div id="noData" class="no-data" style="display:none;">هیچ گزارشی یافت نشد.</div>  <script>  
-  // ساختار attendanceHistory در localStorage: { "1404/05/17": [ {name,job,enter,exit,status}, ... ], "1404/05/18": [...] }  
-  function readHistory() {  
-    try {  
-      return JSON.parse(localStorage.getItem('attendanceHistory')) || {};  
-    } catch (e) {  
-      return {};  
-    }  
+  <a href="1.html"><button id="backBtn" onclick="history.back()">← بازگشت</button></a>
+
+  <h2>سامانه حضور و غیاب شرکت گسترده کام پویا جهش</h2>    <div id="dateContainer">  
+    <input type="text" id="dateInput" placeholder="مثلاً 1404/05/17" />  
+    <button class="save-btn" id="registerDateBtn" onclick="registerDate()">ثبت تاریخ</button>  
+  </div>    <table>  
+    <thead>  
+      <tr>  
+        <th>ردیف</th>  
+        <th>نام</th>  
+        <th>شغل</th>  
+        <th>ورود</th>  
+        <th>خروج</th>  
+        <th>حاضر</th>  
+        <th>غایب</th>  
+        <th>عملیات</th>  
+      </tr>  
+    </thead>  
+    <tbody id="employeeTable"></tbody>  
+  </table>  <button class="save-btn" onclick="saveFinalData()">💾 ذخیره گزارش روزانه</button>
+
+  <div class="add-form">  
+    <input type="text" id="nameInput" placeholder="نام کارمند" />  
+    <input type="text" id="jobInput" placeholder="شغل کارمند" />  
+    <button class="add-btn" onclick="addEmployee()">➕ افزودن</button>  
+  </div>  <script>  
+  let employees = JSON.parse(localStorage.getItem('employeeList')) || [];  
+  
+  function saveAndRender() {  
+    localStorage.setItem('employeeList', JSON.stringify(employees));  
+    renderTable();  
   }  
   
-  function saveHistory(history) {  
-    localStorage.setItem('attendanceHistory', JSON.stringify(history));  
-  }  
-  
-  function buildDateSelect(history) {  
-    const sel = document.getElementById('dateSelect');  
-    sel.innerHTML = '<option value="">➤ انتخاب تاریخ از فهرست (اختیاری)</option>';  
-    const dates = Object.keys(history).sort().reverse();  
-    dates.forEach(d => {  
-      const opt = document.createElement('option');  
-      opt.value = d;  
-      opt.textContent = d + ' (' + history[d].length + ' رکورد)';  
-      sel.appendChild(opt);  
-    });  
-  }  
-  
-  function renderTable(filterDate = '') {  
-    const history = readHistory();  
-    const container = document.getElementById('tableContainer');  
-    container.innerHTML = '';  
-    const allDates = Object.keys(history).sort().reverse();  
-  
-    let rows = [];  
-    if (filterDate) {  
-      if (history[filterDate]) {  
-        history[filterDate].forEach((emp, idx) => rows.push({ date: filterDate, index: idx, emp }));  
-      }  
-    } else {  
-      // همه تاریخ‌ها  
-      allDates.forEach(date => {  
-        history[date].forEach((emp, idx) => rows.push({ date, index: idx, emp }));  
-      });  
-    }  
-  
-    if (rows.length === 0) {  
-      document.getElementById('noData').style.display = 'block';  
-      return;  
-    } else {  
-      document.getElementById('noData').style.display = 'none';  
-    }  
-  
-    // جدول  
-    let html = `<table><thead><tr>  
-      <th>ردیف</th>  
-      <th>تاریخ</th>  
-      <th>نام</th>  
-      <th>شغل</th>  
-      <th>ورود</th>  
-      <th>خروج</th>  
-      <th>وضعیت</th>  
-      <th>عملیات</th>  
-    </tr></thead><tbody>`;  
-  
-    rows.forEach((r, i) => {  
-      const e = r.emp;  
-      html += `<tr data-date="${r.date}" data-idx="${r.index}">  
-        <td>${i+1}</td>  
-        <td>${r.date}</td>  
-        <td contenteditable="true" class="editable name">${escapeHtml(e.name)}</td>  
-        <td contenteditable="true" class="editable job">${escapeHtml(e.job)}</td>  
-        <td contenteditable="true" class="editable enter">${escapeHtml(e.enter)}</td>  
-        <td contenteditable="true" class="editable exit">${escapeHtml(e.exit)}</td>  
+  function renderTable() {  
+    const table = document.getElementById('employeeTable');  
+    table.innerHTML = '';  
+    employees.forEach((emp, index) => {  
+      const row = document.createElement('tr');  
+      row.innerHTML = `  
+        <td>${index + 1}</td>  
+        <td>${emp.name}</td>  
+        <td>${emp.job}</td>  
+        <td class="time-cell">  
+          <div>  
+            <input type="text" value="${emp.enter}" oninput="updateEnter(${index}, this.value)" ${emp.enter === '-' ? 'disabled' : ''} placeholder="مثلاً 9:00" id="enterInput${index}" />  
+            <button class="time-register-btn" onclick="registerCurrentTime(${index}, 'enter')">ثبت</button>  
+          </div>  
+        </td>  
+        <td class="time-cell">  
+          <div>  
+            <input type="text" value="${emp.exit}" oninput="updateExit(${index}, this.value)" ${emp.exit === '-' ? 'disabled' : ''} placeholder="مثلاً 17:00" id="exitInput${index}" />  
+            <button class="time-register-btn" onclick="registerCurrentTime(${index}, 'exit')">ثبت</button>  
+          </div>  
+        </td>  
+        <td><button class="btn status-btn ${emp.status === 'present' ? 'active1' : ''}" onclick="markStatus(${index}, 'present')">✔ حاضر</button></td>  
+        <td><button class="btn status-btn ${emp.status === 'absent' ? 'active' : ''}" onclick="markStatus(${index}, 'absent')">✖ غایب</button></td>  
         <td>  
-          <select class="status-select small">  
-            <option value="">--</option>  
-            <option value="present" ${e.status === 'present' ? 'selected' : ''}>حاضر</option>  
-            <option value="absent" ${e.status === 'absent' ? 'selected' : ''}>غایب</option>  
-          </select>  
+          <button class="btn edit-btn" onclick="toggleEditRow(${index}, this)">✏️ ویرایش</button>  
+          <button class="btn delete-btn" onclick="deleteEmployee(${index})">🗑 حذف</button>  
         </td>  
-        <td class="actions">  
-          <button class="small" onclick="saveRow(this)">💾 ذخیره</button>  
-          <button class="small" onclick="deleteRow(this)">🗑 حذف</button>  
-        </td>  
-      </tr>`;  
+      `;  
+      table.appendChild(row);  
     });  
-  
-    html += '</tbody></table>';  
-    container.innerHTML = html;  
   }  
   
-  // محافظ در برابر XSS نمایشی  
-  function escapeHtml(s) {  
-    if (s === undefined || s === null) return '';  
-    return String(s).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; });  
-  }  
+  // ثبت زمان فعلی سیستم به صورت HH:MM در فیلد ورود یا خروج  
+  function registerCurrentTime(index, field) {  
+    const now = new Date();  
+    const hh = ('0' + now.getHours()).slice(-2);  
+    const mm = ('0' + now.getMinutes()).slice(-2);  
+    const timeStr = `${hh}:${mm}`;  
   
-  // ذخیره یک ردیف پس از ویرایش  
-  function saveRow(btn) {  
-    const tr = btn.closest('tr');  
-    const date = tr.getAttribute('data-date');  
-    const idx = Number(tr.getAttribute('data-idx'));  
-    const history = readHistory();  
-    if (!history[date]) return alert('تاریخ پیدا نشد.');  
-  
-    const name = tr.querySelector('.name').textContent.trim();  
-    const job = tr.querySelector('.job').textContent.trim();  
-    const enter = tr.querySelector('.enter').textContent.trim();  
-    const exit = tr.querySelector('.exit').textContent.trim();  
-    const status = tr.querySelector('.status-select').value;  
-  
-    if (!name || !job) return alert('نام و شغل نمی‌توانند خالی باشند.');  
-  
-    history[date][idx] = { name, job, enter, exit, status };  
-    saveHistory(history);  
-    buildDateSelect(history);  
-    alert('✅ تغییرات ذخیره شد.');  
-    // رفرش جدول با همان فیلتر فعلی  
-    const filterVal = document.getElementById('filterDate').value.trim();  
-    renderTable(filterVal);  
-  }  
-  
-  // حذف یک ردیف  
-  function deleteRow(btn) {  
-    if (!confirm('آیا از حذف این رکورد اطمینان دارید؟')) return;  
-    const tr = btn.closest('tr');  
-    const date = tr.getAttribute('data-date');  
-    const idx = Number(tr.getAttribute('data-idx'));  
-    const history = readHistory();  
-    if (!history[date]) return;  
-    history[date].splice(idx, 1);  
-    if (history[date].length === 0) delete history[date];  
-    saveHistory(history);  
-    buildDateSelect(history);  
-    const filterVal = document.getElementById('filterDate').value.trim();  
-    renderTable(filterVal);  
-  }  
-  
-  // حذف همه  
-  document.getElementById('btnClearAll').addEventListener('click', () => {  
-    if (!confirm('آیا می‌خواهید تمام گزارش‌ها حذف شوند؟ این عمل قابل بازگشت نیست.')) return;  
-    localStorage.removeItem('attendanceHistory');  
-    buildDateSelect({});  
-    renderTable();  
-  });  
-  
-  // فیلتر  
-  document.getElementById('btnFilter').addEventListener('click', () => {  
-    const v = document.getElementById('filterDate').value.trim();  
-    renderTable(v);  
-  });  
-  
-  // نمایش همه  
-  document.getElementById('btnShowAll').addEventListener('click', () => {  
-    document.getElementById('filterDate').value = '';  
-    renderTable();  
-  });  
-  
-  // انتخاب از لیست  
-  document.getElementById('dateSelect').addEventListener('change', (e) => {  
-    const v = e.target.value;  
-    document.getElementById('filterDate').value = v;  
-    renderTable(v);  
-  });  
-  
-  // خروجی Excel از ردیف‌های فعلی جدول  
-  document.getElementById('btnExport').addEventListener('click', () => {  
-    const filterVal = document.getElementById('filterDate').value.trim();  
-    const history = readHistory();  
-    let rows = [];  
-    if (filterVal) {  
-      if (!history[filterVal]) return alert('هیچ گزارشی برای این تاریخ وجود ندارد.');  
-      history[filterVal].forEach(emp => rows.push({ تاریخ: filterVal, نام: emp.name, شغل: emp.job, ورود: emp.enter, خروج: emp.exit, وضعیت: emp.status || '' }));  
-    } else {  
-      Object.keys(history).sort().forEach(date => {  
-        history[date].forEach(emp => rows.push({ تاریخ: date, نام: emp.name, شغل: emp.job, ورود: emp.enter, خروج: emp.exit, وضعیت: emp.status || '' }));  
-      });  
+    if (field === 'enter') {  
+      employees[index].enter = timeStr;  
+      document.getElementById(`enterInput${index}`).value = timeStr;  
+    } else if (field === 'exit') {  
+      employees[index].exit = timeStr;  
+      document.getElementById(`exitInput${index}`).value = timeStr;  
     }  
-    if (rows.length === 0) return alert('هیچ داده‌ای برای خروجی وجود ندارد.');  
+    saveToLocal();  
+  }  
   
-    // ساخت ورک‌بوک و شیت  
-    const ws = XLSX.utils.json_to_sheet(rows);  
-    const wb = XLSX.utils.book_new();  
-    XLSX.utils.book_append_sheet(wb, ws, "گزارش حضور");  
+  function toggleEditRow(index, btn) {  
+    const row = document.querySelectorAll('#employeeTable tr')[index];  
+    if (!row) return;  
   
-    // ساخت فایل Excel و دانلود  
-    XLSX.writeFile(wb, "attendance_report.xlsx");  
-  });  
+    const editMode = btn.textContent === '✔ ذخیره';  
   
-  // بارگذاری اولیه  
-  (function init() {  
-    const history = readHistory();  
-    buildDateSelect(history);  
-    renderTable(); // نمایش همه  
-  })();  
+    if (editMode) {  
+      const nameInput = row.cells[1].querySelector('input');  
+      const jobInput = row.cells[2].querySelector('input');  
+      if (!nameInput.value.trim() || !jobInput.value.trim()) {  
+        alert('نام و شغل نمی‌توانند خالی باشند!');  
+        return;  
+      }  
+      employees[index].name = nameInput.value.trim();  
+      employees[index].job = jobInput.value.trim();  
+  
+      const enterInput = row.cells[3].querySelector('input');  
+      const exitInput = row.cells[4].querySelector('input');  
+      employees[index].enter = enterInput.value.trim();  
+      employees[index].exit = exitInput.value.trim();  
+  
+      saveAndRender();  
+      btn.textContent = '✏️ ویرایش';  
+    } else {  
+      const nameTd = row.cells[1];  
+      const jobTd = row.cells[2];  
+      nameTd.innerHTML = `<input type="text" value="${employees[index].name}">`;  
+      jobTd.innerHTML = `<input type="text" value="${employees[index].job}">`;  
+      btn.textContent = '✔ ذخیره';  
+    }  
+  }  
+  
+  function updateEnter(index, value) {  
+    employees[index].enter = value;  
+    saveToLocal();  
+  }  
+  
+  function updateExit(index, value) {  
+    employees[index].exit = value;  
+    saveToLocal();  
+  }  
+  
+  function addEmployee() {  
+    const name = document.getElementById('nameInput').value.trim();  
+    const job = document.getElementById('jobInput').value.trim();  
+  
+    if (!name || !job) {  
+      alert("لطفاً نام و شغل را وارد کنید.");  
+      return;  
+    }  
+  
+    const exists = employees.some(emp => emp.name.toLowerCase() === name.toLowerCase());  
+    if (exists) {  
+      alert("کارمند با این نام قبلاً ثبت شده است.");  
+      return;  
+    }  
+  
+    employees.push({ name, job, enter: '', exit: '', status: '' });  
+    document.getElementById('nameInput').value = '';  
+    document.getElementById('jobInput').value = '';  
+    saveAndRender();  
+  }  
+  
+  function markStatus(index, status) {  
+    employees[index].status = status;  
+    if (status === 'absent') {  
+      employees[index].enter = '-';  
+      employees[index].exit = '-';  
+    } else {  
+      if (employees[index].enter === '-') employees[index].enter = '';  
+      if (employees[index].exit === '-') employees[index].exit = '';  
+    }  
+    saveAndRender();  
+  }  
+  
+  function deleteEmployee(index) {  
+    if (confirm("آیا مطمئن هستید؟")) {  
+      employees.splice(index, 1);  
+      saveAndRender();  
+    }  
+  }  
+  
+  function saveToLocal() {  
+    localStorage.setItem('employeeList', JSON.stringify(employees));  
+  }  
+  
+  function saveFinalData() {  
+    const date = document.getElementById('dateInput').value.trim();  
+    if (!date) {  
+      alert("لطفاً تاریخ را وارد کنید.");  
+      return;  
+    }  
+    let history = JSON.parse(localStorage.getItem('attendanceHistory')) || {};  
+    history[date] = [...employees];  
+    localStorage.setItem('attendanceHistory', JSON.stringify(history));  
+    alert("✅ گزارش روزانه ذخیره شد برای تاریخ: " + date);  
+  }  
+  
+  // گرفتن تاریخ شمسی امروز به صورت yyyy/mm/dd  
+  function getTodayPersianDate() {  
+    const today = new Date();  
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit', calendar: 'persian' };  
+    try {  
+      return new Intl.DateTimeFormat('fa-IR-u-ca-persian', options).format(today);  
+    } catch {  
+      const y = today.getFullYear();  
+      const m = ('0' + (today.getMonth() + 1)).slice(-2);  
+      const d = ('0' + today.getDate()).slice(-2);  
+      return `${y}/${m}/${d}`;  
+    }  
+  }  
+  
+  function registerDate() {  
+    const dateInput = document.getElementById('dateInput');  
+    const persianDate = getTodayPersianDate();  
+    dateInput.value = persianDate;  
+  
+    localStorage.setItem('registeredDate', persianDate);  
+    alert("تاریخ خودکار ثبت شد: " + persianDate);  
+  }  
+  
+  renderTable();  
 </script>  </body>  
-</html>
+</html>  
