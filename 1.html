@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سامانه مدیریت</title>
+<style>
+  body {
+    font-family: Tahoma, sans-serif;
+    direction: rtl;
+    background-color: #f4f4f4;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  h1 {
+    margin-bottom: 30px;
+    color: #333;
+  }
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 400px;
+    margin: auto;
+  }
+  .card {
+    background: white;
+    padding: 30px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: #333;
+    font-size: 20px;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  }
+  .attendance { border-top: 4px solid #2196f3; }
+  .report { border-top: 4px solid #4caf50; }
+</style>
+</head>
+<body>
+
+<h1>سامانه مدیریت شرکت</h1>
+
+<div class="menu">
+  <a href="2.html" class="card attendance">📋 سامانه حضور و غیاب</a>
+  <a href="3.html" class="card report">📝 گزارش روزانه</a>
+</div>
+
+</body>
+</html>
