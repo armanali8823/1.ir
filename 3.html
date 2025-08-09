@@ -92,9 +92,30 @@
       table, .controls { width: 100%; }
       th, td { font-size:12px; padding:6px; }
     }
+    #backBtn {
+      margin-bottom: 15px;
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      background-color: #b900ffa3;
+      user-select: none;
+    }
+    #backBtn:hover {
+      background-color: #ddd;
+    }
+    /* استایل دکمه ثبت تاریخ کنار input */
+    #registerDateBtn {
+      width: 70px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
+    <a href="خ.html"><button id="backBtn" onclick="history.back()">← بازگشت</button>
+</a>
   <h2>📅 گزارش روزانه - سامانه حضور و غیاب</h2>
 
   <div class="controls">
