@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>سامانه کدگذاری وسایل بر اساس قفسه</title>
+<title>سامانه کدگذاری وسایل شرکت گسترده کام پویا جهش</title>
 <style>
   body {
     font-family: Tahoma, sans-serif;
@@ -75,7 +75,6 @@
   th {
     background: #eee;
   }
-  /* دکمه های عملیات */
   .action-btn {
     background-color: #2196F3;
     border: none;
@@ -102,7 +101,7 @@
 </head>
 <body>
 
-<h2>سامانه کدگذاری وسایل بر اساس قفسه</h2>
+<h2>کدگذاری وسایل شرکت گسترده کام پویا جهش</h2>
 
 <button class="search-btn" type="button" onclick="searchItems()">🔍 جستجو</button>
 <button class="export-btn" type="button" onclick="exportToExcel()">📥 خروجی اکسل</button>
@@ -325,8 +324,9 @@
 
     const ws = XLSX.utils.aoa_to_sheet(ws_data);
 
-    // استایل دادن به هدرها (پررنگ و زمینه خاکستری روشن)
     const range = XLSX.utils.decode_range(ws['!ref']);
+
+    // استایل دادن به هدرها (پررنگ و وسط چین و پس‌زمینه خاکستری)
     for(let C = range.s.c; C <= range.e.c; ++C) {
       const cell_address = XLSX.utils.encode_cell({r:0, c:C});
       if(!ws[cell_address]) continue;
@@ -343,7 +343,23 @@
       };
     }
 
-    // تنظیم عرض ستون‌ها
+    // راست چین کردن داده ها (سطرهای بعد از هدر)
+    for(let R = 1; R <= range.e.r; ++R) {
+      for(let C = range.s.c; C <= range.e.c; ++C) {
+        const cell_address = XLSX.utils.encode_cell({r:R, c:C});
+        if(!ws[cell_address]) continue;
+        ws[cell_address].s = {
+          alignment: { horizontal: "right", vertical: "center" },
+          border: {
+            top: {style:"thin", color: {auto:1}},
+            right: {style:"thin", color: {auto:1}},
+            bottom: {style:"thin", color: {auto:1}},
+            left: {style:"thin", color: {auto:1}}
+          }
+        };
+      }
+    }
+
     ws['!cols'] = [
       {wch: 10}, // کد وسیله
       {wch: 15}, // شماره قفسه
@@ -357,7 +373,6 @@
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'وسایل');
 
-    // ایجاد فایل XLSX و دانلود
     XLSX.writeFile(wb, 'items_export.xlsx');
   }
 </script>
