@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>کدگذاری وسایل بر اساس قفسه با خروجی اکسل</title>
+<style>
+  body {
+    font-family: Tahoma, sans-serif;
+    direction: rtl;
+    background-color: #f0f0f0;
+    padding: 20px;
+    text-align: center;
+  }
+  h2 {
+    margin-bottom: 15px;
+  }
+  .add-form {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 7px rgba(0,0,0,0.1);
+    max-width: 480px;
+    margin: 0 auto 25px auto;
+    text-align: left;
+  }
+  .add-form label {
+    display: inline-block;
+    width: 110px;
+    font-weight: bold;
+  }
+  .add-form input {
+    width: 150px;
+    padding: 7px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .add-form button.add-btn {
+    width: 110px;
+    padding: 8px 10px;
+    font-size: 14px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    table-layout: fixed;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 10px 8px;
+    font-size: 14px;
+    vertical-align: middle;
+    word-wrap: break-word;
+  }
+  th {
+    background-color: #eee;
+  }
+  button {
+    padding: 6px 12px;
+    font-size: 13px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+    margin: 2px;
+    transition: background-color 0.3s;
+  }
+  button.edit-btn {
+    background-color: #2196f3;
+    color: white;
+  }
+  button.save-btn {
+    background-color: #4caf50;
+    color: white;
+  }
+  button.cancel-btn {
+    background-color: #a50014;
+    color: white;
+  }
+  button.export-btn {
+    background-color: #2196f3;
+    color: white;
+    margin-bottom: 20px;
+    padding: 10px 18px;
+    font-size: 15px;
+    border-radius: 7px;
+  }
+  button:hover {
+    opacity: 0.85;
+  }
+  input.table-input {
+    width: 100%;
+    padding: 5px 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h2>سامانه کدگذاری وسایل بر اساس قفسه</h2>
+
+<div class="add-form">
+  <label for="shelfNumber">شماره قفسه:</label>
+  <input type="number" id="shelfNumber" min="1" />
+  <label for="itemNumber">شماره وسیله:</label>
+  <input type="number" id="itemNumber" min="1" /><br/>
+
+  <label for="itemName">نام وسیله:</label>
+  <input type="text" id="itemName" />
+  <label for="itemModel">مدل وسیله:</label>
+  <input type="text" id="itemModel" />
+  <button class="add-btn" onclick="addItem()">➕ ثبت وسیله</button>
+</div>
+
+<button class="export-btn" onclick="exportToExcel()">⬇️ خروجی اکسل</button>
+
+<table>
+  <thead>
+    <tr>
+      <th>کد وسیله</th>
+      <th>شماره قفسه</th>
+      <th>شماره وسیله</th>
+      <th>نام وسیله</th>
+      <th>مدل وسیله</th>
+      <th>عملیات</th>
+    </tr>
+  </thead>
+  <tbody id="itemsTableBody"></tbody>
+</table>
+
+<script>
+  let items = JSON.parse(localStorage.getItem('itemsList')) || [];
+
+  function saveAndRender() {
+    localStorage.setItem('itemsList', JSON.stringify(items));
+    renderTable();
+  }
+
+  function addItem() {
+    const shelfInput = document.getElementById('shelfNumber');
+    const itemInput = document.getElementById('itemNumber');
+    const nameInput = document.getElementById('itemName');
+    const modelInput = document.getElementById('itemModel');
+
+    const shelf = shelfInput.value.trim();
+    const item = itemInput.value.trim();
+    const name = nameInput.value.trim();
+    const model = modelInput.value.trim();
+
+    if (!shelf || !item || shelf <= 0 || item <= 0) {
+      alert('لطفاً شماره قفسه و شماره وسیله را به درستی وارد کنید.');
+      return;
+    }
+    if (!name) {
+      alert('لطفاً نام وسیله را وارد کنید.');
+      return;
+    }
+    if (!model) {
+      alert('لطفاً مدل وسیله را وارد کنید.');
+      return;
+    }
+
+    const code = shelf + '-' + item;
+
+    // بررسی کد تکراری
+    const exists = items.some(i => i.code === code);
+    if (exists) {
+      alert('وسیله‌ای با این کد قبلاً ثبت شده است.');
+      return;
+    }
+
+    items.push({code, shelf, item, name, model});
+    saveAndRender();
+
+    shelfInput.value = '';
+    itemInput.value = '';
+    nameInput.value = '';
+    modelInput.value = '';
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('itemsTableBody');
+    tbody.innerHTML = '';
+    items.forEach((it, index) => {
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${it.code}</td>
+        <td>${it.shelf}</td>
+        <td>${it.item}</td>
+        <td>${escapeHtml(it.name)}</td>
+        <td>${escapeHtml(it.model)}</td>
+        <td>
+          <button class="edit-btn" onclick="editItem(${index}, this)">✏️ ویرایش</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function editItem(index, btn) {
+    const tbody = document.getElementById('itemsTableBody');
+    const tr = tbody.children[index];
+    const it = items[index];
+
+    const editing = btn.textContent === '✔ ذخیره';
+
+    if (editing) {
+      const shelfVal = tr.querySelector(`#editShelf${index}`).value.trim();
+      const itemVal = tr.querySelector(`#editItem${index}`).value.trim();
+      const nameVal = tr.querySelector(`#editName${index}`).value.trim();
+      const modelVal = tr.querySelector(`#editModel${index}`).value.trim();
+
+      if (!shelfVal || !itemVal || shelfVal <= 0 || itemVal <= 0) {
+        alert('لطفاً شماره قفسه و شماره وسیله را به درستی وارد کنید.');
+        return;
+      }
+      if (!nameVal) {
+        alert('لطفاً نام وسیله را وارد کنید.');
+        return;
+      }
+      if (!modelVal) {
+        alert('لطفاً مدل وسیله را وارد کنید.');
+        return;
+      }
+
+      const newCode = shelfVal + '-' + itemVal;
+
+      const codeExists = items.some((i, idx) => i.code === newCode && idx !== index);
+      if (codeExists) {
+        alert('وسیله‌ای با این کد قبلاً ثبت شده است.');
+        return;
+      }
+
+      items[index] = {
+        code: newCode,
+        shelf: shelfVal,
+        item: itemVal,
+        name: nameVal,
+        model: modelVal
+      };
+
+      saveAndRender();
+      return;
+    }
+
+    tr.innerHTML = `
+      <td>${it.code}</td>
+      <td><input id="editShelf${index}" class="table-input" type="number" min="1" value="${it.shelf}"></td>
+      <td><input id="editItem${index}" class="table-input" type="number" min="1" value="${it.item}"></td>
+      <td><input id="editName${index}" class="table-input" type="text" value="${escapeHtml(it.name)}"></td>
+      <td><input id="editModel${index}" class="table-input" type="text" value="${escapeHtml(it.model)}"></td>
+      <td>
+        <button class="save-btn" onclick="editItem(${index}, this)">✔ ذخیره</button>
+        <button class="cancel-btn" onclick="cancelEdit(${index})">✖ لغو</button>
+      </td>
+    `;
+  }
+
+  function cancelEdit(index) {
+    renderTable();
+  }
+
+  // جلوگیری از تزریق کد
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // تابع خروجی اکسل
+  function exportToExcel() {
+    if (items.length === 0) {
+      alert('هیچ داده‌ای برای خروجی گرفتن وجود ندارد.');
+      return;
+    }
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "کد وسیله,شماره قفسه,شماره وسیله,نام وسیله,مدل وسیله\n";
+
+    items.forEach(it => {
+      const row = [it.code, it.shelf, it.item, it.name, it.model]
+        .map(field => `"${field.replace(/"/g, '""')}"`) // محافظت از کاما و " در متن
+        .join(",");
+      csvContent += row + "\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    const now = new Date();
+    const filename = `items_export_${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}.csv`;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  renderTable();
+</script>
+
+</body>
+</html>
