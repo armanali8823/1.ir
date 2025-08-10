@@ -39,9 +39,6 @@
     direction: ltr;
     box-sizing: border-box;
   }
-  input.unit-input {
-    width: 100%;
-  }
   button {
     background-color: #4CAF50;
     border: none;
@@ -57,13 +54,18 @@
   }
   button.search-btn {
     background-color: #0288d1;
+    margin-bottom: 10px;
+    padding: 10px 25px;
+  }
+  button.export-btn {
+    background-color: #f57c00;
     margin-bottom: 20px;
     padding: 10px 25px;
   }
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 25px;
+    margin-top: 15px;
   }
   th, td {
     border: 1px solid #aaa;
@@ -80,6 +82,7 @@
 <h2>سامانه کدگذاری وسایل بر اساس قفسه</h2>
 
 <button class="search-btn" type="button" onclick="searchItems()">🔍 جستجو</button>
+<button class="export-btn" type="button" onclick="exportToExcel()">📥 خروجی اکسل</button>
 
 <div class="container">
   <form id="itemForm" onsubmit="return addItem(event)">
@@ -93,7 +96,7 @@
     <input type="number" id="itemQuantity" name="itemQuantity" placeholder="" min="0" step="any" />
 
     <label for="itemUnit">واحد:</label>
-    <input type="text" id="itemUnit" name="itemUnit" placeholder="" class="unit-input" />
+    <input type="text" id="itemUnit" name="itemUnit" placeholder="" />
 
     <label for="itemName">نام وسیله:</label>
     <input type="text" id="itemName" name="itemName" required />
@@ -197,6 +200,46 @@
       }
       renderTable(filtered);
     }
+  }
+
+  function exportToExcel() {
+    if(items.length === 0) {
+      alert('هیچ داده‌ای برای خروجی وجود ندارد.');
+      return;
+    }
+    const headers = ['کد وسیله', 'شماره قفسه', 'شماره وسیله', 'مقدار', 'واحد', 'نام وسیله', 'مدل وسیله'];
+    const rows = items.map(item => [
+      item.id,
+      item.shelfNumber,
+      item.itemNumber,
+      item.itemQuantity || '',
+      item.itemUnit || '',
+      item.itemName,
+      item.itemModel || ''
+    ]);
+
+    let csvContent = '\uFEFF'; // BOM for Excel UTF-8
+    csvContent += headers.join(',') + '\n';
+
+    rows.forEach(rowArray => {
+      // اگر هر فیلد شامل کاما بود، با "" دورش می‌کنیم
+      const row = rowArray.map(field => {
+        if (typeof field === 'string' && field.includes(',')) {
+          return `"${field}"`;
+        }
+        return field;
+      }).join(',');
+      csvContent += row + '\n';
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'items_export.csv';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 </script>
 
