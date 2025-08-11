@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ثبت اطلاعات دوربین و خروجی اکسل</title>
+<style>
+    body {
+        font-family: Tahoma, sans-serif;
+        direction: rtl;
+        background: #f5f5f5;
+        padding: 20px;
+        text-align: center;
+    }
+    h1 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        margin-top: 20px;
+    }
+    table, th, td {
+        border: 1px solid #000;
+    }
+    th, td {
+        padding: 8px;
+        text-align: center;
+    }
+    input {
+        padding: 8px;
+        margin: 5px 0;
+        width: 95%;
+        max-width: 300px;
+    }
+    button {
+        padding: 8px 15px;
+        margin: 8px 0;
+        cursor: pointer;
+        border-radius: 8px;
+        border: none;
+        background: #1976d2;
+        color: white;
+    }
+    button:hover {
+        background: #0d47a1;
+    }
+</style>
+</head>
+<body>
+
+<h1>ثبت اطلاعات دوربین</h1>
+
+<div>
+    <input type="text" id="brand" placeholder="برند">
+    <input type="text" id="model" placeholder="مدل">
+    <input type="text" id="ip" placeholder="IP">
+    <input type="text" id="mac" placeholder="MAC Address">
+    <input type="text" id="number" placeholder="شماره">
+    <input type="text" id="assetCode" placeholder="کد اموال">
+    <br>
+    <button onclick="addData()">➕ افزودن</button>
+</div>
+
+<table id="dataTable">
+    <thead>
+        <tr>
+            <th>برند</th>
+            <th>مدل</th>
+            <th>IP</th>
+            <th>MAC Address</th>
+            <th>شماره</th>
+            <th>کد اموال</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<button onclick="exportExcel()">📥 خروجی اکسل</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    let data = [];
+
+    function addData() {
+        let brand = document.getElementById("brand").value;
+        let model = document.getElementById("model").value;
+        let ip = document.getElementById("ip").value;
+        let mac = document.getElementById("mac").value;
+        let number = document.getElementById("number").value;
+        let assetCode = document.getElementById("assetCode").value;
+
+        if (!brand || !model || !ip || !mac || !number || !assetCode) {
+            alert("لطفا همه فیلدها را پر کنید!");
+            return;
+        }
+
+        data.push({
+            برند: brand,
+            مدل: model,
+            IP: ip,
+            "MAC Address": mac,
+            شماره: number,
+            "کد اموال": assetCode
+        });
+
+        let table = document.querySelector("#dataTable tbody");
+        let row = table.insertRow();
+        row.insertCell(0).innerText = brand;
+        row.insertCell(1).innerText = model;
+        row.insertCell(2).innerText = ip;
+        row.insertCell(3).innerText = mac;
+        row.insertCell(4).innerText = number;
+        row.insertCell(5).innerText = assetCode;
+
+        document.getElementById("brand").value = "";
+        document.getElementById("model").value = "";
+        document.getElementById("ip").value = "";
+        document.getElementById("mac").value = "";
+        document.getElementById("number").value = "";
+        document.getElementById("assetCode").value = "";
+    }
+
+    function exportExcel() {
+        if (data.length === 0) {
+            alert("هیچ داده‌ای برای خروجی وجود ندارد!");
+            return;
+        }
+
+        let ws = XLSX.utils.json_to_sheet(data);
+        for (let cell in ws) {
+            if (cell[0] === '!') continue;
+            ws[cell].s = { alignment: { horizontal: "right" } };
+        }
+
+        let wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "دوربین‌ها");
+        XLSX.writeFile(wb, "camera_data.xlsx");
+    }
+</script>
+
+</body>
+</html>
