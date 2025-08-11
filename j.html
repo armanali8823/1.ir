@@ -36,17 +36,23 @@
         max-width: 300px;
     }
     button {
-        padding: 8px 15px;
-        margin: 8px 0;
+        padding: 6px 12px;
+        margin: 3px;
         cursor: pointer;
         border-radius: 8px;
         border: none;
-        background: #1976d2;
         color: white;
     }
-    button:hover {
-        background: #0d47a1;
-    }
+    .add-btn { background: #1976d2; }
+    .add-btn:hover { background: #0d47a1; }
+    .edit-btn { background: #fbc02d; color: black; }
+    .edit-btn:hover { background: #f57f17; }
+    .delete-btn { background: #d32f2f; }
+    .delete-btn:hover { background: #b71c1c; }
+    .excel-btn { background: #388e3c; }
+    .excel-btn:hover { background: #1b5e20; }
+    .clear-btn { background: #9e9e9e; }
+    .clear-btn:hover { background: #616161; }
 </style>
 </head>
 <body>
@@ -61,7 +67,7 @@
     <input type="text" id="number" placeholder="شماره">
     <input type="text" id="assetCode" placeholder="کد اموال">
     <br>
-    <button onclick="addData()">➕ افزودن</button>
+    <button class="add-btn" onclick="addData()">➕ افزودن</button>
 </div>
 
 <table id="dataTable">
@@ -73,22 +79,24 @@
             <th>MAC Address</th>
             <th>شماره</th>
             <th>کد اموال</th>
+            <th>عملیات</th>
         </tr>
     </thead>
     <tbody></tbody>
 </table>
 
-<button onclick="exportExcel()">📥 خروجی اکسل</button>
-<button onclick="clearData()">🗑 پاک کردن همه</button>
+<button class="excel-btn" onclick="exportExcel()">📥 خروجی اکسل</button>
+<button class="clear-btn" onclick="clearData()">🗑 پاک کردن همه</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
     let data = JSON.parse(localStorage.getItem("cameraData")) || [];
+    let editIndex = null;
 
     function renderTable() {
         let tableBody = document.querySelector("#dataTable tbody");
         tableBody.innerHTML = "";
-        data.forEach(item => {
+        data.forEach((item, index) => {
             let row = tableBody.insertRow();
             row.insertCell(0).innerText = item.برند;
             row.insertCell(1).innerText = item.مدل;
@@ -96,6 +104,11 @@
             row.insertCell(3).innerText = item["MAC Address"];
             row.insertCell(4).innerText = item.شماره;
             row.insertCell(5).innerText = item["کد اموال"];
+            let actionsCell = row.insertCell(6);
+            actionsCell.innerHTML = `
+                <button class="edit-btn" onclick="editData(${index})">✏ ویرایش</button>
+                <button class="delete-btn" onclick="deleteData(${index})">🗑 حذف</button>
+            `;
         });
     }
 
@@ -112,18 +125,55 @@
             return;
         }
 
-        data.push({
+        let newData = {
             برند: brand,
             مدل: model,
             IP: ip,
             "MAC Address": mac,
             شماره: number,
             "کد اموال": assetCode
-        });
+        };
+
+        if (editIndex !== null) {
+            data[editIndex] = newData;
+            editIndex = null;
+        } else {
+            data.push(newData);
+        }
 
         localStorage.setItem("cameraData", JSON.stringify(data));
         renderTable();
+        clearInputs();
+    }
 
+    function editData(index) {
+        let item = data[index];
+        document.getElementById("brand").value = item.برند;
+        document.getElementById("model").value = item.مدل;
+        document.getElementById("ip").value = item.IP;
+        document.getElementById("mac").value = item["MAC Address"];
+        document.getElementById("number").value = item.شماره;
+        document.getElementById("assetCode").value = item["کد اموال"];
+        editIndex = index;
+    }
+
+    function deleteData(index) {
+        if (confirm("آیا مطمئن هستید که می‌خواهید این ردیف را حذف کنید؟")) {
+            data.splice(index, 1);
+            localStorage.setItem("cameraData", JSON.stringify(data));
+            renderTable();
+        }
+    }
+
+    function clearData() {
+        if (confirm("آیا مطمئن هستید که می‌خواهید همه داده‌ها را حذف کنید؟")) {
+            data = [];
+            localStorage.removeItem("cameraData");
+            renderTable();
+        }
+    }
+
+    function clearInputs() {
         document.getElementById("brand").value = "";
         document.getElementById("model").value = "";
         document.getElementById("ip").value = "";
@@ -147,15 +197,6 @@
         XLSX.writeFile(wb, "camera_data.xlsx");
     }
 
-    function clearData() {
-        if (confirm("آیا مطمئن هستید که می‌خواهید همه داده‌ها را حذف کنید؟")) {
-            data = [];
-            localStorage.removeItem("cameraData");
-            renderTable();
-        }
-    }
-
-    // بارگذاری اولیه جدول از LocalStorage
     renderTable();
 </script>
 
