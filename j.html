@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ثبت اطلاعات دوربین و خروجی اکسل</title>
+<title>ثبت اطلاعات دوربین</title>
 <style>
     body {
         font-family: Tahoma, sans-serif;
@@ -79,10 +79,25 @@
 </table>
 
 <button onclick="exportExcel()">📥 خروجی اکسل</button>
+<button onclick="clearData()">🗑 پاک کردن همه</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-    let data = [];
+    let data = JSON.parse(localStorage.getItem("cameraData")) || [];
+
+    function renderTable() {
+        let tableBody = document.querySelector("#dataTable tbody");
+        tableBody.innerHTML = "";
+        data.forEach(item => {
+            let row = tableBody.insertRow();
+            row.insertCell(0).innerText = item.برند;
+            row.insertCell(1).innerText = item.مدل;
+            row.insertCell(2).innerText = item.IP;
+            row.insertCell(3).innerText = item["MAC Address"];
+            row.insertCell(4).innerText = item.شماره;
+            row.insertCell(5).innerText = item["کد اموال"];
+        });
+    }
 
     function addData() {
         let brand = document.getElementById("brand").value;
@@ -106,14 +121,8 @@
             "کد اموال": assetCode
         });
 
-        let table = document.querySelector("#dataTable tbody");
-        let row = table.insertRow();
-        row.insertCell(0).innerText = brand;
-        row.insertCell(1).innerText = model;
-        row.insertCell(2).innerText = ip;
-        row.insertCell(3).innerText = mac;
-        row.insertCell(4).innerText = number;
-        row.insertCell(5).innerText = assetCode;
+        localStorage.setItem("cameraData", JSON.stringify(data));
+        renderTable();
 
         document.getElementById("brand").value = "";
         document.getElementById("model").value = "";
@@ -128,17 +137,26 @@
             alert("هیچ داده‌ای برای خروجی وجود ندارد!");
             return;
         }
-
         let ws = XLSX.utils.json_to_sheet(data);
         for (let cell in ws) {
             if (cell[0] === '!') continue;
             ws[cell].s = { alignment: { horizontal: "right" } };
         }
-
         let wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "دوربین‌ها");
         XLSX.writeFile(wb, "camera_data.xlsx");
     }
+
+    function clearData() {
+        if (confirm("آیا مطمئن هستید که می‌خواهید همه داده‌ها را حذف کنید؟")) {
+            data = [];
+            localStorage.removeItem("cameraData");
+            renderTable();
+        }
+    }
+
+    // بارگذاری اولیه جدول از LocalStorage
+    renderTable();
 </script>
 
 </body>
